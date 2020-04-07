@@ -97,7 +97,14 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
         }
         return ""
     }
-
+    
+    private fun androidQSaveImage2Gallery(bmp: Bitmap){
+        val ctx = registrar.activeContext().applicationContext
+        val resolver = ctx.contentResolver
+        MediaStore.Images.Media.insertImage(resolver,bmp,"${System.currentTimeMillis()}.png","")
+        
+    }
+    
     private fun exceptionMsg(e:Exception):String{
         val msg = e.message
         //val stackTrace = e.stackTrace
@@ -117,7 +124,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
                 put(MediaStore.Images.Media.DESCRIPTION, file.name)
                 put(MediaStore.Images.Media.RELATIVE_PATH, getApplicationName() + File.separator + file.name)
             }
-            val result = ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            val result = ctx.contentResolver.insert(MediaStore.Images.Media.INTERNAL_CONTENT_URI, values)
             Log.d(TAG, "result: $result")
         } else {
             ctx.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
