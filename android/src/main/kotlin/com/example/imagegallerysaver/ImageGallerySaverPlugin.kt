@@ -51,12 +51,11 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
 
     val IS_DEBUG = true;
 
-    private fun showToast(msg: String) {
+    private fun debugMsg(msg: String) {
         if (!IS_DEBUG) {
             return
         }
-        val ctx = registrar.activeContext().applicationContext
-        Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show()
+        Log.d(TAG,"debugMsg: $msg")
     }
 
     private fun generateFile(extension: String = ""): File {
@@ -70,14 +69,14 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
             Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
         }
 
-        showToast("$storePath")
+        debugMsg("$storePath")
 
         val appDir = File(storePath)
         if (!appDir.exists()) {
             var created = appDir.mkdir()
-            showToast("storePath created:$created")
+            debugMsg("storePath created:$created")
         }else{
-            showToast("storePath exists")
+            debugMsg("storePath exists")
         }
         var fileName = System.currentTimeMillis().toString()
         if (extension.isNotEmpty()) {
@@ -98,7 +97,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
             return uri.toString()
         } catch (e: Exception) {
             e.printStackTrace()
-            showToast("Exception: ${e.stackTrace}")
+            debugMsg("Exception: ${e.stackTrace}")
         }
         return ""
     }
