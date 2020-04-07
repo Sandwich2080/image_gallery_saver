@@ -54,7 +54,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
 
         var storePath = ""
         storePath = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q) {
-            ctx.getExternalFilesDir(null)!!.absolutePath + File.separator + getApplicationName()
+            ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.absolutePath + File.separator + getApplicationName()
         }else{
             Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
         }
