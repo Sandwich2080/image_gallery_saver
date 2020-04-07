@@ -49,12 +49,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
 
     }
 
-    val IS_DEBUG = true;
-
     private fun debugMsg(msg: String) {
-        if (!IS_DEBUG) {
-            return
-        }
         Log.d(TAG,"debugMsg: $msg")
     }
 
