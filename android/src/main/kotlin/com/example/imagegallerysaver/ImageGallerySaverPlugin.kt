@@ -11,10 +11,11 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.Toast
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.io.File
 import java.io.FileOutputStream
@@ -48,20 +49,35 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
 
     }
 
+    val IS_DEBUG = true;
+
+    private fun showToast(msg: String) {
+        if (!IS_DEBUG) {
+            return
+        }
+        val ctx = registrar.activeContext().applicationContext
+        Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show()
+    }
+
     private fun generateFile(extension: String = ""): File {
 
         val ctx = registrar.activeContext().applicationContext
 
         var storePath = ""
-        storePath = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.Q) {
+        storePath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.absolutePath + File.separator + getApplicationName()
-        }else{
+        } else {
             Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
         }
 
+        showToast("$storePath")
+
         val appDir = File(storePath)
         if (!appDir.exists()) {
-            appDir.mkdir()
+            var created = appDir.mkdir()
+            showToast("storePath created:$created")
+        }else{
+            showToast("storePath exists")
         }
         var fileName = System.currentTimeMillis().toString()
         if (extension.isNotEmpty()) {
@@ -78,15 +94,16 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
             fos.flush()
             fos.close()
             val uri = Uri.fromFile(file)
-            setVisibleInGallery(file,uri)
+            setVisibleInGallery(file, uri)
             return uri.toString()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
+            showToast("Exception: ${e.stackTrace}")
         }
         return ""
     }
 
-    private fun setVisibleInGallery(file: File,uri: Uri) {
+    private fun setVisibleInGallery(file: File, uri: Uri) {
         Log.d(TAG, "setVisibleInGallery")
         val ctx = registrar.activeContext().applicationContext
         Log.d(TAG, "SDK version: ${Build.VERSION.SDK_INT}, Q:${Build.VERSION_CODES.Q}")
@@ -95,9 +112,9 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
                 put(MediaStore.Images.Media.DISPLAY_NAME, file.name)
                 put(MediaStore.Images.Media.CONTENT_TYPE, "image/jpeg")
                 put(MediaStore.Images.Media.DESCRIPTION, file.name)
-                put(MediaStore.Images.Media.RELATIVE_PATH,getApplicationName()+File.separator+file.name)
+                put(MediaStore.Images.Media.RELATIVE_PATH, getApplicationName() + File.separator + file.name)
             }
-            val result = ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
+            val result = ctx.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             Log.d(TAG, "result: $result")
         } else {
             ctx.sendBroadcast(Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri))
