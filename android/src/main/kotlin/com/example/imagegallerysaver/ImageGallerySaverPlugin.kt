@@ -103,7 +103,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
         //val stackTrace = e.stackTrace
 
 
-        return "Exception: $msg ${e.localizedMessage} ${e.cause!!.message}"
+        return "Exception: $msg ${e.localizedMessage}"
     }
 
     private fun setVisibleInGallery(file: File, uri: Uri) {
