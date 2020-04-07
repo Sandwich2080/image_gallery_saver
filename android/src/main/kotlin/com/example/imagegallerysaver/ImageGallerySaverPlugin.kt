@@ -51,6 +51,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
 
     private fun debugMsg(msg: String) {
         Log.d(TAG,"debugMsg: $msg")
+        Toast.makeText(registrar.activity(),msg,Toast.LENGTH_LONG).show()
     }
 
     private fun generateFile(extension: String = ""): File {
