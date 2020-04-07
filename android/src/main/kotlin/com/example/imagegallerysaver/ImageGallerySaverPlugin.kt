@@ -65,7 +65,7 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
             Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
         }
 
-        debugMsg("$storePath")
+        debugMsg("storePath：$storePath")
 
         val appDir = File(storePath)
         if (!appDir.exists()) {
@@ -93,9 +93,17 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
             return uri.toString()
         } catch (e: Exception) {
             e.printStackTrace()
-            debugMsg("Exception: ${e.stackTrace}")
+            debugMsg(exceptionMsg(e))
         }
         return ""
+    }
+
+    private fun exceptionMsg(e:Exception):String{
+        val msg = e.message
+        //val stackTrace = e.stackTrace
+
+
+        return "Exception: $msg ${e.localizedMessage} ${e.cause!!.message}"
     }
 
     private fun setVisibleInGallery(file: File, uri: Uri) {
