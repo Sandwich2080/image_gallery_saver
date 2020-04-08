@@ -58,14 +58,15 @@ class ImageGallerySaverPlugin(private val registrar: Registrar) : MethodCallHand
 
         val ctx = registrar.activeContext().applicationContext
 
-        var storePath = ""
+        /*var storePath = ""
         storePath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.absolutePath + File.separator + getApplicationName()
         } else {
             Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
-        }
+        }*/
+        var storePath = Environment.getExternalStorageDirectory().absolutePath + File.separator + getApplicationName()
 
-        Log.d(TAG,"files path: ${ctx.filesDir.absolutePath}")
+        Log.d(TAG,"files path: ${ctx.filesDir.absolutePath}\n ${Environment.getDataDirectory().absolutePath}")
 
         debugMsg("storePath：$storePath")
 
